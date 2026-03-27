@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, nextTick } from 'vue'
 import { Rive, Layout, Fit, Alignment } from '@rive-app/canvas'
 
 const currentPhase = ref(0)
@@ -50,8 +50,9 @@ onMounted(() => {
   setTimeout(() => { currentPhase.value = 2 }, 6000)
 
   // Phase 3: Boy enters (10s)
-  setTimeout(() => { 
+  setTimeout(async () => { 
     currentPhase.value = 3 
+    await nextTick() // Ensure canvas is in DOM
     initRive()
     // Trigger CSS walk toward center
     setTimeout(() => { boyInPosition.value = true }, 100)
@@ -76,9 +77,12 @@ const initRive = () => {
 const onReachedMiddle = () => {
   // When the CSS walk finishes, set the Rive input to "standing" or "stop"
   if (riveInstance) {
-    const inputs = riveInstance.stateMachineInputs('MainMachine')
-    const stopInput = inputs.find(i => i.name === 'isStopping')
-    if (stopInput) stopInput.value = true
+    // Correctly reference the 'bouncing' state machine used in vehicles.riv
+    const inputs = riveInstance.stateMachineInputs('bouncing')
+    if (inputs) {
+      const stopInput = inputs.find(i => i.name === 'isStopping')
+      if (stopInput) stopInput.value = true
+    }
   }
 }
 </script>
