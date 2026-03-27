@@ -119,6 +119,7 @@ onMounted(() => {
   }
 }
 
+
 .animate-stream {
   animation-name: stream;
   animation-timing-function: linear;
