@@ -52,12 +52,16 @@ onMounted(() => {
 
 <template>
   <div class="fixed inset-0 bg-black flex items-center justify-center overflow-hidden">
-    <!-- Phase 3: The Observer (Film-Noir Cinematic Silhouette) -->
+    <!-- Phase 3: The Observer (Hyper-Realistic Cinematic Character) -->
     <Transition name="fade-slow">
       <div v-if="currentPhase >= 3" 
-           class="absolute bottom-[-20px] left-[-300px] w-[250px] h-[400px] z-50 pointer-events-none animate-walk-in mix-blend-screen overflow-hidden">
-        <!-- 10-frame walk cycle container -->
-        <div class="w-full h-full bg-[url('../assets/boy_cinematic_sprite.png')] bg-[length:1000%_100%] animate-walk-cycle film-grain"></div>
+           class="absolute bottom-[-20px] left-[-300px] w-[280px] h-[450px] z-50 pointer-events-none animate-walk-in mix-blend-screen overflow-hidden">
+        
+        <!-- Dynamic Ground Shadow (Parallax) -->
+        <div class="absolute bottom-[20px] left-1/2 -translate-x-1/2 w-[120px] h-[40px] bg-black/60 blur-xl rounded-full scale-y-50 animate-shadow-pulse"></div>
+
+        <!-- 12-frame Hyper-Realistic Sprite -->
+        <div class="w-full h-full bg-[url('../assets/boy_cinematic_v2.png')] bg-[length:600%_200%] animate-walk-cycle film-grade relative z-10"></div>
       </div>
     </Transition>
 
@@ -97,27 +101,44 @@ onMounted(() => {
 </template>
 
 <style scoped>
-/* Cinematic Walk Cycle (10 frames) */
+/* Master-Class Walk Cycle (12 frames, 2x6 grid) */
 @keyframes walk-cycle {
-  from { background-position: 0 0; }
-  to { background-position: -1000% 0; }
+  0.0% { background-position: 0% 0%; }
+  8.33% { background-position: 20% 0%; }
+  16.66% { background-position: 40% 0%; }
+  25.0% { background-position: 60% 0%; }
+  33.33% { background-position: 80% 0%; }
+  41.66% { background-position: 100% 0%; }
+  50.0% { background-position: 0% 100%; }
+  58.33% { background-position: 20% 100%; }
+  66.66% { background-position: 40% 100%; }
+  75.0% { background-position: 60% 100%; }
+  83.33% { background-position: 80% 100%; }
+  91.66% { background-position: 100% 100%; }
+  100% { background-position: 100% 100%; }
 }
 
 @keyframes walk-in {
   0% {
     left: -300px;
-    filter: brightness(0.5) blur(2px);
+    filter: brightness(0.4) blur(4px);
+    transform: scale(0.9);
   }
   100% {
     left: 50%;
-    transform: translateX(-50%);
-    filter: brightness(1) blur(0);
+    transform: translateX(-50%) scale(1);
+    filter: brightness(1.2) blur(0);
   }
 }
 
+@keyframes shadow-pulse {
+  0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.6; }
+  50% { transform: translateX(-50%) scale(1.1); opacity: 0.8; }
+}
+
 .animate-walk-cycle {
-  /* 0.8s per complete 10-frame cycle for a natural gait */
-  animation: walk-cycle 0.8s steps(10) infinite;
+  /* Ultra-smooth 1.0s cycle for a cinematic, heavy gait */
+  animation: walk-cycle 1.2s steps(1) infinite;
 }
 
 .animate-walk-in {
