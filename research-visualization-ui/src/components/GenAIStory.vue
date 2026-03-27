@@ -62,10 +62,10 @@ const initRive = () => {
   if (!boyCanvas.value) return
 
   riveInstance = new Rive({
-    src: '/boy_character.riv', // Path to your file in public folder
+    src: 'https://cdn.rive.app/animations/vehicles.riv', // Provided CDN URL
     canvas: boyCanvas.value,
     autoplay: true,
-    stateMachines: 'MainMachine',
+    stateMachines: 'bouncing', // Generic state machine for vehicles.riv
     layout: new Layout({
       fit: Fit.Contain,
       alignment: Alignment.Center,
