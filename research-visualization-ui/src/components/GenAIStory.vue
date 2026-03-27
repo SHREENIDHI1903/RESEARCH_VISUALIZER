@@ -1,11 +1,7 @@
 <script setup lang="ts">
-import { ref, onMounted, nextTick } from 'vue'
-import { Rive, Layout, Fit, Alignment } from '@rive-app/canvas'
+import { ref, onMounted } from 'vue'
 
 const currentPhase = ref(0)
-const boyInPosition = ref(false)
-const boyCanvas = ref<HTMLCanvasElement | null>(null)
-let riveInstance: Rive | null = null
 
 // Words pool for the text well
 const aiWords = [
@@ -48,56 +44,11 @@ onMounted(() => {
 
   // Phase 2: Text Well (6s)
   setTimeout(() => { currentPhase.value = 2 }, 6000)
-
-  // Phase 3: Boy enters (10s)
-  setTimeout(async () => { 
-    currentPhase.value = 3 
-    await nextTick() // Ensure canvas is in DOM
-    initRive()
-    // Trigger CSS walk toward center
-    setTimeout(() => { boyInPosition.value = true }, 100)
-  }, 10000)
 })
-
-const initRive = () => {
-  if (!boyCanvas.value) return
-
-  riveInstance = new Rive({
-    src: 'https://cdn.rive.app/animations/vehicles.riv', // Provided CDN URL
-    canvas: boyCanvas.value,
-    autoplay: true,
-    stateMachines: 'bouncing', // Generic state machine for vehicles.riv
-    layout: new Layout({
-      fit: Fit.Contain,
-      alignment: Alignment.Center,
-    }),
-  })
-}
-
-const onReachedMiddle = () => {
-  // When the CSS walk finishes, set the Rive input to "standing" or "stop"
-  if (riveInstance) {
-    // Correctly reference the 'bouncing' state machine used in vehicles.riv
-    const inputs = riveInstance.stateMachineInputs('bouncing')
-    if (inputs) {
-      const stopInput = inputs.find(i => i.name === 'isStopping')
-      if (stopInput) stopInput.value = true
-    }
-  }
-}
 </script>
 
 <template>
   <div class="fixed inset-0 bg-black flex items-center justify-center overflow-hidden">
-    <!-- Phase 3: The Observer (Rive Animated Character) -->
-    <div v-if="currentPhase >= 3"
-         class="boy-wrapper"
-         :class="{ 'at-center': boyInPosition }"
-         @transitionend="onReachedMiddle"
-    >
-      <canvas ref="boyCanvas" width="500" height="500" class="drop-shadow-2xl"></canvas>
-    </div>
-
     <!-- Phase 2: Text Well (Infinite streaming AI terms) -->
     <Transition name="fade">
       <div v-if="currentPhase >= 2" class="absolute inset-0 pointer-events-none z-10 flex items-center justify-center">
@@ -134,20 +85,6 @@ const onReachedMiddle = () => {
 </template>
 
 <style scoped>
-.boy-wrapper {
-  position: absolute;
-  bottom: -20px;
-  left: -300px;
-  z-index: 50;
-  transition: left 6s cubic-bezier(0.45, 0.05, 0.55, 0.95);
-  pointer-events: none;
-}
-
-.boy-wrapper.at-center {
-  left: 50%;
-  transform: translateX(-50%);
-}
-
 @keyframes stream {
   0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
   12% { opacity: 1; transform: translate(calc(var(--tx) * 0.12 - 50%), calc(var(--ty) * 0.12 - 50%)) scale(0.7); }
