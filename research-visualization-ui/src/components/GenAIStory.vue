@@ -1,0 +1,153 @@
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+
+const currentPhase = ref(0)
+
+// Words pool for the text well
+const aiWords = [
+  'Neural Networks', 'Transformers', 'Self-Attention', 'Latent Space',
+  'Diffusion Models', 'LLM', 'Backpropagation', 'Gradient Descent',
+  'Embedding', 'Generative Adversarial Networks', 'Parameters',
+  'Tokenization', 'Vector Database', 'RAG', 'Prompt Engineering',
+  'Fine-Tuning', 'Zero-Shot', 'Few-Shot', 'Reinforcement Learning',
+  'Semantic Search', 'Weights & Biases', 'Epoch', 'Activation Function'
+]
+
+// Generate a rich, dense field of particles for continuous emission
+const wordParticles = Array.from({ length: 120 }, (_, i) => {
+  const angle = Math.random() * Math.PI * 2
+  
+  // Use a wide variety of distances to fill the entire screen depth
+  const distance = 25 + Math.random() * 55 // 25vw to 80vw equivalent
+  
+  return {
+    id: i,
+    text: aiWords[Math.floor(Math.random() * aiWords.length)],
+    tx: `${Math.cos(angle) * distance}vw`,
+    ty: `${Math.sin(angle) * distance}vh`,
+    // Stagger delays to ensure they pop out one-by-one
+    delay: `${Math.random() * 25}s`,
+    duration: `${12 + Math.random() * 18}s`,
+    fontSize: `${0.8 + Math.random() * 0.7}rem`,
+    opacity: 0.5 + Math.random() * 0.5 // Higher minimum opacity for better visibility
+  }
+})
+
+onMounted(() => {
+  // Phase 1: Sun Ray after 3 seconds
+  setTimeout(() => {
+    currentPhase.value = 1
+  }, 3000)
+
+  // Phase 2: Text Well after 6 seconds
+  setTimeout(() => {
+    currentPhase.value = 2
+  }, 6000)
+})
+</script>
+
+<template>
+  <div class="fixed inset-0 bg-black flex items-center justify-center overflow-hidden">
+    <!-- Phase 2: Text Well (Infinite streaming AI terms) -->
+    <Transition name="fade">
+      <div v-if="currentPhase >= 2" class="absolute inset-0 pointer-events-none z-10 flex items-center justify-center">
+        <div v-for="particle in wordParticles" :key="particle.id"
+             class="absolute font-sans font-medium text-slate-100/90 tracking-widest whitespace-nowrap animate-stream"
+             :style="{
+               '--tx': particle.tx,
+               '--ty': particle.ty,
+               fontSize: particle.fontSize,
+               opacity: particle.opacity,
+               'animation-delay': particle.delay, // Positive delay for sequential emergence
+               'animation-duration': particle.duration
+             }">
+          {{ particle.text }}
+        </div>
+      </div>
+    </Transition>
+
+    <!-- Phase 1: Sun Rays from center -->
+    <Transition name="fade-slow">
+      <div v-if="currentPhase >= 1" class="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <!-- Central glowing core -->
+        <div class="relative w-full h-full flex items-center justify-center">
+          <!-- Expanding ambient glow -->
+          <div class="absolute w-[600px] h-[600px] bg-white rounded-full opacity-10 blur-[100px] animate-ray-expand"></div>
+          
+          <!-- Concentrated core glow -->
+          <div class="absolute w-32 h-32 bg-white blur-[40px] rounded-full opacity-60 animate-pulse-slow"></div>
+        </div>
+      </div>
+    </Transition>
+
+    <!-- Phase 0: The Void -->
+    <Transition name="fade">
+      <div v-if="currentPhase === 0" class="w-full h-full bg-black"></div>
+    </Transition>
+  </div>
+</template>
+
+<style scoped>
+@keyframes stream {
+  0% {
+    /* Absolute origin at the center with zero size */
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+  }
+  12% {
+    /* Emergence from the sun-ray core */
+    opacity: 1;
+    transform: translate(calc(var(--tx) * 0.12 - 50%), calc(var(--ty) * 0.12 - 50%)) scale(0.7);
+  }
+  85% {
+    /* Full clarity across the journey */
+    opacity: 1;
+  }
+  100% {
+    /* Final destination and vanishing */
+    transform: translate(calc(var(--tx) - 50%), calc(var(--ty) - 50%)) scale(1.1);
+    opacity: 0;
+  }
+}
+
+.animate-stream {
+  animation-name: stream;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-fill-mode: both;
+}
+
+@keyframes ray-expand {
+  0% { transform: scale(0); opacity: 0; }
+  100% { transform: scale(1); opacity: 0.2; }
+}
+
+
+@keyframes pulse-slow {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.1); }
+}
+
+.animate-ray-expand {
+  animation: ray-expand 4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+
+.animate-pulse-slow {
+  animation: pulse-slow 6s ease-in-out infinite;
+}
+
+.fade-slow-enter-active {
+  transition: opacity 4s ease-in-out;
+}
+.fade-slow-enter-from {
+  opacity: 0;
+}
+
+.fade-leave-active {
+  transition: opacity 1s ease;
+}
+.fade-leave-to {
+  opacity: 0;
+}
+</style>
