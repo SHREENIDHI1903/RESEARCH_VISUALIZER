@@ -5,12 +5,21 @@ const currentPhase = ref(0)
 
 // Words pool for the text well
 const aiWords = [
-  'Neural Networks', 'Transformers', 'Self-Attention', 'Latent Space',
-  'Diffusion Models', 'LLM', 'Backpropagation', 'Gradient Descent',
-  'Embedding', 'Generative Adversarial Networks', 'Parameters',
-  'Tokenization', 'Vector Database', 'RAG', 'Prompt Engineering',
-  'Fine-Tuning', 'Zero-Shot', 'Few-Shot', 'Reinforcement Learning',
-  'Semantic Search', 'Weights & Biases', 'Epoch', 'Activation Function'
+  'LLM', 'Transformers', 'Diffusion Models', 'RAG', 'Vector Database',
+  'Fine-Tuning', 'Zero-Shot', 'Few-Shot', 'Prompt Engineering',
+  'Reinforcement Learning', 'Neural Networks', 'Generative Adversarial Nets',
+  'Backpropagation', 'Gradient Descent', 'Latent Space', 'Parameters', 'Tokenization',
+  'Embedding', 'Self-Attention', 'Semantic Search', 'Weights & Biases', 'Epoch',
+  'Activation Function', 'Chain of Thought', 'Tree of Thoughts', 'LoRA', 'QLoRA',
+  'Quantization', 'Flash Attention', 'Vision Transformer', 'ViT', 'MoE',
+  'Mixture of Experts', 'GNN', 'Autoencoder', 'CNN', 'RNN', 'LSTM',
+  'Adam Optimizer', 'RMSProp', 'Dropout', 'Batch Norm', 'Layer Norm',
+  'Overfitting', 'Generalization', 'Distillation', 'BLEU Score', 'ROUGE',
+  'Perplexity', 'F1-Score', 'RLHF', 'Alignment', 'Bias Mitigation',
+  'Hallucination', 'Explainability', 'Red Teaming', 'CLIP', 'Stable Diffusion',
+  'Midjourney', 'DALL-E', 'Sora', 'Data Augmentation', 'Feature Engineering',
+  'Pre-training', 'Transfer Learning', 'Tokenization', 'Multi-Head Attention',
+  'Positional Encoding', 'Cross-Attention', 'Beam Search', 'Greedy Decoding'
 ]
 
 // Generate a rich, dense field of particles for continuous emission
