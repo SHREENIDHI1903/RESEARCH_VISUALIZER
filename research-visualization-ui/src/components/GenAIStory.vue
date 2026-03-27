@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { VueLottiePlayer } from '@lottiefiles/vue-lottie-player'
+import { Vue3Lottie } from 'vue3-lottie'
 
 const currentPhase = ref(0)
 
@@ -57,12 +57,12 @@ onMounted(() => {
     <Transition name="fade-slow">
       <div v-if="currentPhase >= 3" 
            class="absolute bottom-[-10px] left-[-300px] w-[350px] h-[350px] z-50 pointer-events-none animate-walk-in mix-blend-screen overflow-hidden cinematic-character">
-        <VueLottiePlayer
+        <Vue3Lottie
           loop
           autoplay
-          path="https://assets5.lottiefiles.com/packages/lf20_sSF6tu.json"
-          width="100%"
-          height="100%"
+          animationLink="https://assets5.lottiefiles.com/packages/lf20_sSF6tu.json"
+          :width="350"
+          :height="350"
         />
       </div>
     </Transition>

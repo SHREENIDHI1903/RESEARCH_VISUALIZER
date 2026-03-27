@@ -1,1 +1,1 @@
-declare module '@lottiefiles/vue-lottie-player';
+declare module 'vue3-lottie';
