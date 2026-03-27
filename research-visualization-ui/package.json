@@ -11,6 +11,8 @@
     "type-check": "vue-tsc --build"
   },
   "dependencies": {
+    "@lottiefiles/vue-lottie-player": "^1.1.0",
+    "lottie-web": "^5.13.0",
     "vue": "beta",
     "vue-router": "^5.0.3"
   },

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { VueLottiePlayer } from '@lottiefiles/vue-lottie-player'
 
 const currentPhase = ref(0)
 
@@ -52,16 +53,17 @@ onMounted(() => {
 
 <template>
   <div class="fixed inset-0 bg-black flex items-center justify-center overflow-hidden">
-    <!-- Phase 3: The Observer (Hyper-Realistic Cinematic Character) -->
+    <!-- Phase 3: The Observer (True Runtime Lottie Animation) -->
     <Transition name="fade-slow">
       <div v-if="currentPhase >= 3" 
-           class="absolute bottom-[-20px] left-[-300px] w-[280px] h-[450px] z-50 pointer-events-none animate-walk-in mix-blend-screen overflow-hidden">
-        
-        <!-- Dynamic Ground Shadow (Parallax) -->
-        <div class="absolute bottom-[20px] left-1/2 -translate-x-1/2 w-[120px] h-[40px] bg-black/60 blur-xl rounded-full scale-y-50 animate-shadow-pulse"></div>
-
-        <!-- 12-frame Hyper-Realistic Sprite -->
-        <div class="w-full h-full bg-[url('../assets/boy_cinematic_v2.png')] bg-[length:600%_200%] animate-walk-cycle film-grade relative z-10"></div>
+           class="absolute bottom-[-10px] left-[-300px] w-[350px] h-[350px] z-50 pointer-events-none animate-walk-in mix-blend-screen overflow-hidden cinematic-character">
+        <VueLottiePlayer
+          loop
+          autoplay
+          path="https://assets5.lottiefiles.com/packages/lf20_sSF6tu.json"
+          width="100%"
+          height="100%"
+        />
       </div>
     </Transition>
 
@@ -101,59 +103,27 @@ onMounted(() => {
 </template>
 
 <style scoped>
-/* Master-Class Walk Cycle (12 frames, 2x6 grid) */
-@keyframes walk-cycle {
-  0.0% { background-position: 0% 0%; }
-  8.33% { background-position: 20% 0%; }
-  16.66% { background-position: 40% 0%; }
-  25.0% { background-position: 60% 0%; }
-  33.33% { background-position: 80% 0%; }
-  41.66% { background-position: 100% 0%; }
-  50.0% { background-position: 0% 100%; }
-  58.33% { background-position: 20% 100%; }
-  66.66% { background-position: 40% 100%; }
-  75.0% { background-position: 60% 100%; }
-  83.33% { background-position: 80% 100%; }
-  91.66% { background-position: 100% 100%; }
-  100% { background-position: 100% 100%; }
-}
-
 @keyframes walk-in {
   0% {
-    left: -300px;
-    filter: brightness(0.4) blur(4px);
-    transform: scale(0.9);
+    left: -350px;
+    filter: brightness(0.3) blur(6px);
+    transform: scale(0.8);
   }
   100% {
     left: 50%;
     transform: translateX(-50%) scale(1);
-    filter: brightness(1.2) blur(0);
+    filter: brightness(1.1) blur(0);
   }
 }
 
-@keyframes shadow-pulse {
-  0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.6; }
-  50% { transform: translateX(-50%) scale(1.1); opacity: 0.8; }
-}
-
-.animate-walk-cycle {
-  /* Ultra-smooth 1.0s cycle for a cinematic, heavy gait */
-  animation: walk-cycle 1.2s steps(1) infinite;
-}
-
 .animate-walk-in {
-  /* 6s travel from left to center with cinematic easing */
-  animation: walk-in 6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  /* 7s cinematic travel with high-end easing */
+  animation: walk-in 7s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
-/* Pause the legs when the travel finishes (approx 7.5 cycles in 6s) */
-.animate-walk-cycle {
-  animation-iteration-count: 7.5;
-  animation-fill-mode: forwards;
-}
-
-.film-grain {
-  filter: contrast(1.1) brightness(1.2) drop-shadow(0 0 10px rgba(255,255,255,0.1));
+.cinematic-character {
+  /* Apply film-grade color correction to the Lottie vector */
+  filter: contrast(1.2) saturate(0.8) drop-shadow(0 0 20px rgba(255,255,255,0.05));
 }
 
 @keyframes stream {
