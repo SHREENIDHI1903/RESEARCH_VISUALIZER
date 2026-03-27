@@ -11,6 +11,7 @@
     "type-check": "vue-tsc --build"
   },
   "dependencies": {
+    "@rive-app/canvas": "^2.35.4",
     "vue": "beta",
     "vue-router": "^5.0.3"
   },

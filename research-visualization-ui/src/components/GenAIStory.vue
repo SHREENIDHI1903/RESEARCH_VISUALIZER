@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { Rive, Layout, Fit, Alignment } from '@rive-app/canvas'
 
 const currentPhase = ref(0)
+const boyInPosition = ref(false)
+const boyCanvas = ref<HTMLCanvasElement | null>(null)
+let riveInstance: Rive | null = null
 
 // Words pool for the text well
 const aiWords = [
@@ -22,41 +26,74 @@ const aiWords = [
   'Positional Encoding', 'Cross-Attention', 'Beam Search', 'Greedy Decoding'
 ]
 
-// Generate a rich, dense field of particles for continuous emission
+// Generate a word particles field
 const wordParticles = Array.from({ length: 120 }, (_, i) => {
   const angle = Math.random() * Math.PI * 2
-  
-  // Use a wide variety of distances to fill the entire screen depth
-  const distance = 25 + Math.random() * 55 // 25vw to 80vw equivalent
-  
+  const distance = 25 + Math.random() * 55
   return {
     id: i,
     text: aiWords[Math.floor(Math.random() * aiWords.length)],
     tx: `${Math.cos(angle) * distance}vw`,
     ty: `${Math.sin(angle) * distance}vh`,
-    // Stagger delays to ensure they pop out one-by-one
     delay: `${Math.random() * 25}s`,
     duration: `${12 + Math.random() * 18}s`,
     fontSize: `${0.8 + Math.random() * 0.7}rem`,
-    opacity: 0.5 + Math.random() * 0.5 // Higher minimum opacity for better visibility
+    opacity: 0.5 + Math.random() * 0.5
   }
 })
 
 onMounted(() => {
-  // Phase 1: Sun Ray after 3 seconds
-  setTimeout(() => {
-    currentPhase.value = 1
-  }, 3000)
+  // Phase 1: Sun Ray (3s)
+  setTimeout(() => { currentPhase.value = 1 }, 3000)
 
-  // Phase 2: Text Well after 6 seconds
-  setTimeout(() => {
-    currentPhase.value = 2
-  }, 6000)
+  // Phase 2: Text Well (6s)
+  setTimeout(() => { currentPhase.value = 2 }, 6000)
+
+  // Phase 3: Boy enters (10s)
+  setTimeout(() => { 
+    currentPhase.value = 3 
+    initRive()
+    // Trigger CSS walk toward center
+    setTimeout(() => { boyInPosition.value = true }, 100)
+  }, 10000)
 })
+
+const initRive = () => {
+  if (!boyCanvas.value) return
+
+  riveInstance = new Rive({
+    src: '/boy_character.riv', // Path to your file in public folder
+    canvas: boyCanvas.value,
+    autoplay: true,
+    stateMachines: 'MainMachine',
+    layout: new Layout({
+      fit: Fit.Contain,
+      alignment: Alignment.Center,
+    }),
+  })
+}
+
+const onReachedMiddle = () => {
+  // When the CSS walk finishes, set the Rive input to "standing" or "stop"
+  if (riveInstance) {
+    const inputs = riveInstance.stateMachineInputs('MainMachine')
+    const stopInput = inputs.find(i => i.name === 'isStopping')
+    if (stopInput) stopInput.value = true
+  }
+}
 </script>
 
 <template>
   <div class="fixed inset-0 bg-black flex items-center justify-center overflow-hidden">
+    <!-- Phase 3: The Observer (Rive Animated Character) -->
+    <div v-if="currentPhase >= 3"
+         class="boy-wrapper"
+         :class="{ 'at-center': boyInPosition }"
+         @transitionend="onReachedMiddle"
+    >
+      <canvas ref="boyCanvas" width="500" height="500" class="drop-shadow-2xl"></canvas>
+    </div>
+
     <!-- Phase 2: Text Well (Infinite streaming AI terms) -->
     <Transition name="fade">
       <div v-if="currentPhase >= 2" class="absolute inset-0 pointer-events-none z-10 flex items-center justify-center">
@@ -67,7 +104,7 @@ onMounted(() => {
                '--ty': particle.ty,
                fontSize: particle.fontSize,
                opacity: particle.opacity,
-               'animation-delay': particle.delay, // Positive delay for sequential emergence
+               'animation-delay': particle.delay,
                'animation-duration': particle.duration
              }">
           {{ particle.text }}
@@ -75,15 +112,11 @@ onMounted(() => {
       </div>
     </Transition>
 
-    <!-- Phase 1: Sun Rays from center -->
+    <!-- Phase 1: Sun Rays -->
     <Transition name="fade-slow">
       <div v-if="currentPhase >= 1" class="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <!-- Central glowing core -->
         <div class="relative w-full h-full flex items-center justify-center">
-          <!-- Expanding ambient glow -->
           <div class="absolute w-[600px] h-[600px] bg-white rounded-full opacity-10 blur-[100px] animate-ray-expand"></div>
-          
-          <!-- Concentrated core glow -->
           <div class="absolute w-32 h-32 bg-white blur-[40px] rounded-full opacity-60 animate-pulse-slow"></div>
         </div>
       </div>
@@ -97,28 +130,26 @@ onMounted(() => {
 </template>
 
 <style scoped>
-@keyframes stream {
-  0% {
-    /* Absolute origin at the center with zero size */
-    transform: translate(-50%, -50%) scale(0);
-    opacity: 0;
-  }
-  12% {
-    /* Emergence from the sun-ray core */
-    opacity: 1;
-    transform: translate(calc(var(--tx) * 0.12 - 50%), calc(var(--ty) * 0.12 - 50%)) scale(0.7);
-  }
-  85% {
-    /* Full clarity across the journey */
-    opacity: 1;
-  }
-  100% {
-    /* Final destination and vanishing */
-    transform: translate(calc(var(--tx) - 50%), calc(var(--ty) - 50%)) scale(1.1);
-    opacity: 0;
-  }
+.boy-wrapper {
+  position: absolute;
+  bottom: -20px;
+  left: -300px;
+  z-index: 50;
+  transition: left 6s cubic-bezier(0.45, 0.05, 0.55, 0.95);
+  pointer-events: none;
 }
 
+.boy-wrapper.at-center {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+@keyframes stream {
+  0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+  12% { opacity: 1; transform: translate(calc(var(--tx) * 0.12 - 50%), calc(var(--ty) * 0.12 - 50%)) scale(0.7); }
+  85% { opacity: 1; }
+  100% { transform: translate(calc(var(--tx) - 50%), calc(var(--ty) - 50%)) scale(1.1); opacity: 0; }
+}
 
 .animate-stream {
   animation-name: stream;
@@ -132,32 +163,21 @@ onMounted(() => {
   100% { transform: scale(1); opacity: 0.2; }
 }
 
-
 @keyframes pulse-slow {
   0%, 100% { opacity: 0.6; transform: scale(1); }
   50% { opacity: 1; transform: scale(1.1); }
 }
 
-.animate-ray-expand {
-  animation: ray-expand 4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+.animate-ray-expand { 
+  animation: ray-expand 4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; 
 }
 
-
-.animate-pulse-slow {
-  animation: pulse-slow 6s ease-in-out infinite;
+.animate-pulse-slow { 
+  animation: pulse-slow 6s ease-in-out infinite; 
 }
 
-.fade-slow-enter-active {
-  transition: opacity 4s ease-in-out;
-}
-.fade-slow-enter-from {
-  opacity: 0;
-}
-
-.fade-leave-active {
-  transition: opacity 1s ease;
-}
-.fade-leave-to {
-  opacity: 0;
-}
+.fade-slow-enter-active { transition: opacity 4s ease-in-out; }
+.fade-slow-enter-from { opacity: 0; }
+.fade-leave-active { transition: opacity 1s ease; }
+.fade-leave-to { opacity: 0; }
 </style>
